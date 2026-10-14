@@ -9,6 +9,7 @@ import base64
 import jsonpickle
 import random
 import argparse
+import base64
 
 
 def doRawImage(addr, debug=False):
@@ -41,11 +42,42 @@ def doAdd(addr, debug=False):
 
 
 def doDotProduct(addr, debug=False):
-    pass
+    headers = {'content-type': 'application/json'}
+
+    data = {
+        'a': [random.random() for _ in range(100)],
+        'b': [random.random() for _ in range(100)]
+    }
+
+    url = addr + '/api/dotproduct'
+
+    response = requests.post(url, json=data, headers=headers)
+
+    if debug:
+        print("Response is", response)
+        print(json.loads(response.text))
 
 
 def doJsonImage(addr, debug=False):
-    pass
+    # Read the image from the file
+    with open('Flatirons_Winter_Sunrise_edit_2.jpg', 'rb') as f:
+        image_bytes = f.read()
+
+    # Convert image bytes to Base64
+    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+
+    # Prepare the JSON request
+    data = {'image': encoded_image}
+
+    # Send image to REST server
+    response = requests.post(
+        addr + '/api/jsonimage',
+        json=data
+    )
+
+    if debug:
+        print("Response is", response)
+        print(json.loads(response.text))
 
 
 # ---------------------------------------------------------
